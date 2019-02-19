@@ -1,0 +1,115 @@
+{
+  "datacite": {
+    "creators": [
+      {
+        "givenName": "David",
+        "familyName": "Kelley",
+        "affiliations": []
+      }
+    ],
+    "titles": [
+      {
+        "title": "Basset"
+      }
+    ],
+    "publisher": "DLHub",
+    "publicationYear": "2019",
+    "identifier": {
+      "identifier": "10.YET/UNASSIGNED",
+      "identifierType": "DOI"
+    },
+    "descriptions": [
+      {
+        "description": "This is the Basset model published by David Kelley converted to pytorch by Roman Kreuzhuber. It categorically predicts probabilities of accesible genomic regions in  164 cell types. Data was generated using DNAse-seq. The sequence length the model uses as input is 600bp. The input of the tensor has to be (N, 4, 600, 1) for N samples, 600bp window size and 4 nucleotides. Per sample, 164 probabilities of accessible chromatin will be predicted. \n",
+        "descriptionType": "Abstract"
+      }
+    ],
+    "fundingReferences": [],
+    "relatedIdentifiers": [],
+    "alternateIdentifiers": [
+      {
+        "alternateIdentifier": "https://doi.org/10.1101/gr.200535.115",
+        "alternateIdentifierType": "URL"
+      }
+    ],
+    "rightsList": [],
+    "resourceType": {
+      "resourceTypeGeneral": "InteractiveResource"
+    }
+  },
+  "dlhub": {
+    "version": "0.5.2",
+    "domains": [
+      "genomics"
+    ],
+    "visible_to": [
+      "public"
+    ],
+    "name": "basset_kipoi",
+    "files": {
+      "other": [
+        "repo2docker/environment.yml",
+        "app.py",
+        "model/model.yaml",
+        "model/test_basset_model.py",
+        "model/model_info.json",
+        "model/dataloader.yaml",
+        "model/dataloader.py",
+        "model/target_labels.txt",
+        "model/inputData/hg38_chr22.fa",
+        "model/inputData/intervals.bed",
+        "model/inputData/hg38_chr22.fa.fai",
+        "model/test_files/encode_roadmap.bed",
+        "model/test_files/encode_roadmap_short_pred.txt",
+        "model/test_files/encode_roadmap_short.h5",
+        "model/test_files/test_basset_model.py",
+        "model/model_files/pretrained_model_reloaded_th.pth",
+        "model/model_files/pretrained_model_reloaded_th.py",
+        "model/model_files/__pycache__/pretrained_model_reloaded_th.cpython-35.pyc",
+        "model/example_files/hg38_chr22.fa",
+        "model/example_files/intervals.bed",
+        "model/example_files/hg38_chr22.fa.fai"
+      ]
+    },
+    "type": "servable"
+  },
+  "servable": {
+    "methods": {
+      "run": {
+        "input": {
+          "type": "dict",
+          "description": "Test input dict for Basset",
+          "properties": {
+            "fasta_file_name": {
+              "type": "string",
+              "description": "fasta file name"
+            },
+            "intervals_file_name": {
+              "type": "string",
+              "description": "intervals file name"
+            }
+          }
+        },
+        "output": {
+          "type": "string",
+          "description": "JSON Encode of the model output, Model Output: Probability of accessible chromatin in 164 cell types"
+        },
+        "parameters": {
+          "batchSize": null,
+          "stringInput": "False"
+        },
+        "method_details": {
+          "method_name": "run",
+          "module": "app",
+          "autobatch": false
+        }
+      }
+    },
+    "shim": "python.PythonStaticMethodServable",
+    "type": "Python static method",
+    "dependencies": {
+      "python": {}
+    },
+    "language": "python"
+  }
+}

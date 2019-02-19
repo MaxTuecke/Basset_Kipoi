@@ -1,0 +1,54 @@
+type: pytorch
+args:
+  file: model_files/pretrained_model_reloaded_th.py
+  build_fn: get_model
+info:
+  authors:
+      - name: David Kelley
+        github: davek44
+  contributors:
+      - name: Roman Kreuzhuber
+        github: krrome
+  name: Basset
+  version: 0.1.0
+  doc: >
+    This is the Basset model published by David Kelley converted to pytorch
+    by Roman Kreuzhuber.
+    It categorically predicts probabilities of accesible genomic regions in 
+    164 cell types. Data was generated using DNAse-seq. The sequence length
+    the model uses as input is 600bp.
+    The input of the tensor has to be (N, 4, 600, 1) for N samples, 600bp window
+    size and 4 nucleotides. Per sample, 164 probabilities of accessible chromatin
+    will be predicted. 
+  cite_as: https://doi.org/10.1101/gr.200535.115
+  tags:
+    - DNA accessibility
+default_dataloader: .
+dependencies:
+  conda:
+    - h5py
+  pip:
+    - torch
+schema:
+  inputs:
+    name: seq
+    special_type: DNASeq
+    shape: (4,600,1)
+    doc: DNA sequence
+    associated_metadata: ranges
+  targets:
+    name: DHS_probs
+    shape: (164, )
+    doc: Probability of accessible chromatin in 164 cell types
+    column_labels:
+      - target_labels.txt
+postprocessing:
+    variant_effects:
+      seq_input:
+        - seq
+      use_rc: True
+      scoring_functions:
+        - type: diff
+          default: true
+        - type: logit
+          default: true
