@@ -48,7 +48,7 @@
     "name": "basset_kipoi",
     "files": {
       "other": [
-        "repo2docker/environment.yml",
+        "environment.yml",
         "app.py",
         "model/model.yaml",
         "model/test_basset_model.py",
