@@ -35,6 +35,10 @@ def run(inputParams, batchSize = None, stringInput = "False", useGeneralLoader =
 	modelInfoJSON = json.load(open('./model/model_info.json'))
 	MODEL_NAME = modelInfoJSON["model_name"]
 
+	#TEMPORARY FOR TESTING
+	#stringInput = "True"
+
+
 	if stringInput == "True":
 		if not os.path.exists("./model/inputData"):
 			os.makedirs("./model/inputData")
@@ -77,8 +81,7 @@ def run(inputParams, batchSize = None, stringInput = "False", useGeneralLoader =
 	outputData = check_targets(outputData, modelInfo)
 	outputFormat = json.dumps(outputData)
 
-	if stringInput == "False":
-		delete_input_data()
+	#delete_input_data()
 
 	return outputFormat
 
