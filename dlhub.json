@@ -48,7 +48,7 @@
     "name": "basset_kipoi",
     "files": {
       "other": [
-        "/Users/max/Internship2018/Kipoi/Kipoi_New/Application/environment.yml",
+        "environment.yml",
         "app.py",
         "model/model.yaml",
         "model/test_basset_model.py",
