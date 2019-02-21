@@ -362,6 +362,7 @@ def test_run():
 	#print(run({"intervals_file_name": "intervals.bed", "fasta_file_name": "hg38_chr22.fa", "dnase_file_name": "dnase_synth.chr22.bw"}, batchSize=4))
 	#print(run({"mirna_fasta_file_name": "miRNA.fasta", "mrna_fasta_file_name": "3UTR.fasta", "query_pair_file_name": "miRNA-mRNA_query.txt"}, batchSize=4))
 
+	#print(run({"fasta_file_name": "hg38_chr22.fa", "intervals_file_name": "intervals.bed"}))
 	#print(run(OrderedDict([('fasta_file_name', 'hg38_chr22.fa'), ('intervals_file_name', 'intervals.bed')]), batchSize = 4, useGeneralLoader = "False"))
 
 #test_run()
