@@ -48,24 +48,22 @@
     "name": "basset_kipoi",
     "files": {
       "other": [
-        "environment.yml",
+        "/Users/max/Internship2018/Kipoi/Kipoi_New/Application/environment.yml",
         "app.py",
         "model/model.yaml",
         "model/test_basset_model.py",
         "model/model_info.json",
+        "model/model_new.yaml",
         "model/dataloader.yaml",
         "model/dataloader.py",
         "model/target_labels.txt",
-        "model/inputData/hg38_chr22.fa",
-        "model/inputData/intervals.bed",
-        "model/inputData/hg38_chr22.fa.fai",
+        "model/inputData/input.txt",
         "model/test_files/encode_roadmap.bed",
         "model/test_files/encode_roadmap_short_pred.txt",
         "model/test_files/encode_roadmap_short.h5",
         "model/test_files/test_basset_model.py",
         "model/model_files/pretrained_model_reloaded_th.pth",
         "model/model_files/pretrained_model_reloaded_th.py",
-        "model/model_files/__pycache__/pretrained_model_reloaded_th.cpython-35.pyc",
         "model/example_files/hg38_chr22.fa",
         "model/example_files/intervals.bed",
         "model/example_files/hg38_chr22.fa.fai"
@@ -77,18 +75,9 @@
     "methods": {
       "run": {
         "input": {
-          "type": "dict",
-          "description": "Test input dict for Basset",
-          "properties": {
-            "fasta_file_name": {
-              "type": "string",
-              "description": "fasta file name"
-            },
-            "intervals_file_name": {
-              "type": "string",
-              "description": "intervals file name"
-            }
-          }
+          "type": "python object",
+          "description": "Input is an Ordered dict of model labels and values. Model Input Schema: DNA sequence  Input Dict Labels: intervals_file [Description: bed3 file with `chrom start end id score strand`, Optional: False], fasta_file [Description: Reference genome sequence, Optional: False], use_linecache [Description: if True, use linecache https://docs.python.org/3/library/linecache.html to access bed file rows, Optional: True]",
+          "python_type": "collections.OrderedDict"
         },
         "output": {
           "type": "string",
@@ -96,7 +85,8 @@
         },
         "parameters": {
           "batchSize": null,
-          "stringInput": "False"
+          "stringInput": "False",
+          "useGeneralLoader": "True"
         },
         "method_details": {
           "method_name": "run",

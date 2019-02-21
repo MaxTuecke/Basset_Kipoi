@@ -3,17 +3,18 @@ import json, yaml
 import types
 import os, sys
 
+from collections import OrderedDict
+
 from os import listdir
 from os.path import isfile, join
 
 import kipoi.model
-from kipoi.model import KerasModel, TensorFlowModel, SklearnModel, OldPyTorchModel, load_model_custom
+from kipoi.model import KerasModel, TensorFlowModel, SklearnModel, OldPyTorchModel, load_model_custom, PyTorchModel
 
 from kipoi.data import PreloadedDataset, Dataset, BatchDataset, SampleIterator, SampleGenerator, BatchIterator, BatchGenerator
 from kipoi.utils import load_module, cd, getargs
 from kipoi.specs import DataLoaderDescription, ModelDescription
 
-#Different kipoi premade dataloader formats, needed for get data loader factory
 AVAILABLE_DATALOADERS = {"PreloadedDataset": PreloadedDataset,
                          "Dataset": Dataset,
                          "BatchDataset": BatchDataset,
@@ -25,8 +26,9 @@ AVAILABLE_DATALOADERS = {"PreloadedDataset": PreloadedDataset,
 DATALOADERS_AS_FUNCTIONS = ["PreloadedDataset", "SampleGenerator", "BatchGenerator"]
 
 
-def run(inputParams, batchSize = None, stringInput = "False"):
+def run(inputParams, batchSize = None, stringInput = "False", useGeneralLoader = "True"):
 
+	inputParams = dict(inputParams)
 
 	modelInfo = yaml.load(open("model/model.yaml"))
 	loaderInfo = yaml.load(open("model/dataloader.yaml"))
@@ -40,9 +42,25 @@ def run(inputParams, batchSize = None, stringInput = "False"):
 
 	model = createModel(modelInfo)
 	dl_kwargs = makeDlKwargs(inputParams, modelInfoJSON, batchSize)
-	dataLoader = getDataLoader()
-	dl = dataLoader(**dl_kwargs)
-	it = dl.batch_iter(batch_size=modelInfoJSON["batch_size"])
+
+	if useGeneralLoader == "True":
+		try:
+			from kipoi.specs import ModelDescription
+			md = ModelDescription.load("./model/model_new.yaml")
+			default_dataloader = md.default_dataloader.get()
+			dl = default_dataloader(**dl_kwargs)
+		except:
+			dataLoader = getDataLoader()
+			dl = dataLoader(**dl_kwargs)
+	else:
+		dataLoader = getDataLoader()
+		dl = dataLoader(**dl_kwargs)
+
+	if batchSize is not None:
+		it = dl.batch_iter(batch_size=batchSize)
+	else:
+		it = dl.batch_iter(batch_size=modelInfoJSON["batch_size"])
+
 	batch = next(it)
 
 	if modelInfo["type"] != "custom":
@@ -54,11 +72,26 @@ def run(inputParams, batchSize = None, stringInput = "False"):
 			modelObj = model()
 		pred = modelObj.predict_on_batch(batch['inputs'])
 	
-	outputFormat = json.dumps(numpy_to_list(pred))
 
-	#delete_input_data()
+	outputData = numpy_to_list(pred)
+	outputData = check_targets(outputData, modelInfo)
+	outputFormat = json.dumps(outputData)
+
+	if stringInput == "False":
+		delete_input_data()
 
 	return outputFormat
+
+def check_targets(outputData, modelInfo):
+	try:
+		targets_file = modelInfo["schema"]["targets"]["column_labels"][0]
+		content = open("./model/"+targets_file).readlines()
+		content = [x.strip() for x in content] 
+		return {"Output Targets": outputData, "Column Labels": content}
+	except:
+		return {"Output Targets": outputData}
+	
+
 
 def numpy_to_list(input_list):
 	if type(input_list) is np.ndarray:
@@ -85,13 +118,8 @@ def delete_input_data():
 	import shutil
 	folder = './model/inputData'
 	for the_file in os.listdir(folder):
-		file_path = os.path.join(folder, the_file)
-		try:
-			if os.path.isfile(file_path):
-				os.unlink(file_path)
-		#elif os.path.isdir(file_path): shutil.rmtree(file_path)
-		except Exception as e:
-			print(e)
+		if the_file != "input.txt":
+			os.remove(os.path.join(folder, the_file))
 
 def createModel(modelInfo):
 	modelType = modelInfo["type"]
@@ -137,7 +165,7 @@ def createPytorchModel(modelInfo, modelArgs):
 	#module = types.ModuleType(loader.name)
 	#loader.exec_module(module)
 
-	#model = PyTorchModel(weights = weightsPath, auto_use_cuda = False)
+	#model = PyTorchModel(weights = "./model/model_files/pretrained_model_reloaded_th.pth", module_class = filePath, auto_use_cuda = False)
 
 	model = OldPyTorchModel(file = filePath, build_fn = buildFN, weights = weightsPath, auto_use_cuda = False)
 
@@ -318,26 +346,19 @@ def makeDlKwargs(inputParams, modelInfoJSON, batchSize):
 
 
 def test_run():
+	#fasta_data = open("./model/TestFiles/hg38_chr22.fa", 'rb').read()
+	#intervals_data = open("./model/TestFiles/intervals.bed", 'rb').read()
+	#print(run({"intervals_file_name": intervals_data, "fasta_file_name": fasta_data}, batchSize=4, stringInput="True"))
+
+
+	#print(run({"intervals_file_name": "intervals_file", "fasta_file_name": "fasta_file", "dnase_file_name": "dnase_file"}, batchSize=4, useGeneralLoader = "False"))
 
 	#print(run({"anno_file_name": "SE_chr22.gtf", "fasta_file_name": "hg19_chr22.fa", "meth_file_name": "meth_chr22.bedGraph.sorted.gz"}, batchSize=4))
 	#print(run({"vcf_file_name": "scn2a.vcf"}, batchSize=4))
 	#print(run({"intervals_file_name": "intervals.bed", "fasta_file_name": "hg38_chr22.fa"}, batchSize=4))
 	#print(run({"intervals_file_name": "intervals.bed", "fasta_file_name": "hg38_chr22.fa", "dnase_file_name": "dnase_synth.chr22.bw"}, batchSize=4))
 	#print(run({"mirna_fasta_file_name": "miRNA.fasta", "mrna_fasta_file_name": "3UTR.fasta", "query_pair_file_name": "miRNA-mRNA_query.txt"}, batchSize=4))
-	
-	
-	#fasta_data = open("./model/TestFiles/hg38_chr22.fa", 'rb').read()
-	#intervals_data = open("./model/TestFiles/intervals.bed", 'rb').read()
-	#print(run({"intervals_file_name": intervals_data, "fasta_file_name": fasta_data}, batchSize=4, stringInput="True"))
-	print(run({"fasta_file_name": "hg38_chr22.fa", "intervals_file_name": "intervals.bed"}))
+
+	#print(run(OrderedDict([('fasta_file_name', 'hg38_chr22.fa'), ('intervals_file_name', 'intervals.bed')]), batchSize = 4, useGeneralLoader = "False"))
 
 #test_run()
-
-
-
-
-
-
-
-
-
