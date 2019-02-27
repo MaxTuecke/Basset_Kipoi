@@ -349,13 +349,12 @@ def makeDlKwargs(inputParams, modelInfoJSON, batchSize):
 
 
 def test_run():
-	#fasta_data = open("./model/TestFiles/hg38_chr22.fa", 'rb').read()
-	#intervals_data = open("./model/TestFiles/intervals.bed", 'rb').read()
-	#print(run({"intervals_file_name": intervals_data, "fasta_file_name": fasta_data}, batchSize=4, stringInput="True"))
+	fasta_data = open("./model/TestFiles/hg38_chr22.fa", 'rb').read()
+	intervals_data = open("./model/TestFiles/intervals.bed", 'rb').read()
+	print(run({"intervals_file_name": intervals_data, "fasta_file_name": fasta_data}, batchSize=4, stringInput="True"))
 
 
 	#print(run({"intervals_file_name": "intervals_file", "fasta_file_name": "fasta_file", "dnase_file_name": "dnase_file"}, batchSize=4, useGeneralLoader = "False"))
-
 	#print(run({"anno_file_name": "SE_chr22.gtf", "fasta_file_name": "hg19_chr22.fa", "meth_file_name": "meth_chr22.bedGraph.sorted.gz"}, batchSize=4))
 	#print(run({"vcf_file_name": "scn2a.vcf"}, batchSize=4))
 	#print(run({"intervals_file_name": "intervals.bed", "fasta_file_name": "hg38_chr22.fa"}, batchSize=4))
@@ -364,5 +363,5 @@ def test_run():
 
 	#print(run({"fasta_file_name": "hg38_chr22.fa", "intervals_file_name": "intervals.bed"}))
 	#print(run(OrderedDict([('fasta_file_name', 'hg38_chr22.fa'), ('intervals_file_name', 'intervals.bed')]), batchSize = 4, useGeneralLoader = "False"))
-
+    
 #test_run()
