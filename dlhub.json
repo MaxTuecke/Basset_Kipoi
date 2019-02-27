@@ -85,8 +85,8 @@
         },
         "parameters": {
           "batchSize": null,
-          "stringInput": "False",
-          "useGeneralLoader": "True"
+          "stringInput": false,
+          "useGeneralLoader": true
         },
         "method_details": {
           "method_name": "run",

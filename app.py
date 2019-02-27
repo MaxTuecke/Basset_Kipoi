@@ -26,7 +26,7 @@ AVAILABLE_DATALOADERS = {"PreloadedDataset": PreloadedDataset,
 DATALOADERS_AS_FUNCTIONS = ["PreloadedDataset", "SampleGenerator", "BatchGenerator"]
 
 
-def run(inputParams, batchSize = None, stringInput = "False", useGeneralLoader = "True"):
+def run(inputParams, batchSize = None, stringInput = False, useGeneralLoader = True):
 
 	inputParams = dict(inputParams)
 
@@ -39,7 +39,7 @@ def run(inputParams, batchSize = None, stringInput = "False", useGeneralLoader =
 	#stringInput = "True"
 
 
-	if stringInput == "True":
+	if stringInput == True:
 		if not os.path.exists("./model/inputData"):
 			os.makedirs("./model/inputData")
 		write_files(inputParams, modelInfoJSON)
@@ -47,7 +47,7 @@ def run(inputParams, batchSize = None, stringInput = "False", useGeneralLoader =
 	model = createModel(modelInfo)
 	dl_kwargs = makeDlKwargs(inputParams, modelInfoJSON, batchSize)
 
-	if useGeneralLoader == "True":
+	if useGeneralLoader == True:
 		try:
 			from kipoi.specs import ModelDescription
 			md = ModelDescription.load("./model/model_new.yaml")
